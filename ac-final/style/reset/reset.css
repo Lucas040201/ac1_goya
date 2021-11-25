@@ -1,0 +1,10 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: helvetica;
+}
+
+html, body, main {
+    font-size: 62.5%;
+    height: 100%;
+}

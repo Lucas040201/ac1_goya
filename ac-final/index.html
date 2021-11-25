@@ -1,0 +1,89 @@
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat do ZapZap</title>
+    <link rel="stylesheet" href="./style/style.css">
+
+    <script>
+      function GetMsg(u1, u2, painel_de_saida) {
+        const xhttp = new XMLHttpRequest();
+      
+        xhttp.onreadystatechange = function() {
+          if( this.readyState === XMLHttpRequest.DONE && this.status === 200 ) {
+          resposta = JSON.parse(this.responseText);
+          mensagens = JSON.parse(resposta["body"]);
+      
+            painel_de_saida.value = "";
+            for( i = 0; i < mensagens.length; i++ )
+              painel_de_saida.value += '(' + String(i + 1) + ') ' +
+              mensagens[i]["data_hora"] + '\n' + mensagens[i]["msg"] + '\n\n';
+          }
+        }
+      
+        var consulta = "?from=" + '"'+u1.value+'"' + "&to=" + '"'+u2.value+'"'
+        xhttp.open("GET", url + consulta);
+        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhttp.send();
+      }
+      
+      function PostMsg() {
+        var corpo = JSON.stringify(
+          { "from": '"'+document.getElementById("remetente").value + '"',
+            "to"  : '"'+document.getElementById("destinatario").value + '"',
+            "msg" : '"'+ document.getElementById("mensagem").value } + '"');
+      
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("POST", url);
+        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhttp.send(corpo);
+      
+        GetMsg(document.getElementById("remetente"), document.getElementById("usr2"),
+          document.getElementById("from"));
+      
+        GetMsg(document.getElementById("destinatario"), document.getElementById("remetente"),
+          document.getElementById("to"));
+      
+        document.getElementById("mensagem").value = "";
+        document.getElementById("mensagem").focus();
+      }
+      
+      </script>
+</head>
+<body>
+  <main>
+    <section class="chat">
+      <div class="chat-container">
+        <h2 class="chat-title">Chat do ZapZap</h2>
+        <div class="chat-box">
+          <div class="chat-item">
+            <div class="chat-people">
+              <label class="chat-from" for="remetente">Remetente:</label>
+              <input Type="text" id="remetente" name="remetente" placeholder="Digite o nome do Remetente">
+            </div>
+            <textarea Name="from" id="from" cols="80" rows="25"></textarea>
+          </div>
+          <div class="chat-item">
+            <div class="chat-people">
+              <label class="chat-to" for="destinatario">Destinatario:</label>
+              <input Type="text" id="destinatario" name="destinatario" placeholder="Digite o nome do Destinatario">
+            </div>
+            <textarea Name="from" id="from" cols="80" rows="25"></textarea>
+          </div>
+        </div>
+        <div class="chat-message">
+          <input Type="text" id="mensagem" name="mensagem" placeholder="Digite uma mensagem">
+        </div>
+        <button type="button" onclick="PostMsg()">Enviar Mensagem</button>
+      </div>
+    </section>
+  </main>
+
+
+<script>
+  // A URL abaixo deve ser configurada com o do API Gateway
+  url = "https://nussfsanw7.execute-api.us-east-1.amazonaws.com/Producao";
+</script>
+</body>
+</html>
